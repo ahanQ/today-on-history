@@ -12,8 +12,13 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import me.lqlu.util.JsonUtil;
 
+/**
+ * access_token 缓存
+ * @author ahan
+ *
+ */
 @Component
 public class AccessTokenCache implements InitializingBean {
 
@@ -21,6 +26,9 @@ public class AccessTokenCache implements InitializingBean {
 
 	@Autowired
 	private WeixinApi api;
+	
+	@Autowired
+	private JsonUtil jsonUtil;
 
 	private AccessToken accessToken;
 
@@ -29,8 +37,6 @@ public class AccessTokenCache implements InitializingBean {
 	private String filePath;
 
 	private File file;
-
-	private ObjectMapper mapper;
 
 	public String readAccess_Token() {
 		if (accessToken == null) {
@@ -46,7 +52,10 @@ public class AccessTokenCache implements InitializingBean {
 	private void loadAccessTokenFromApi() {
 		String content = api.getAccessToken();
 		try {
-			AccessToken access = mapper.readValue(content, AccessToken.class);
+			AccessToken access = jsonUtil.readValue(content, AccessToken.class);
+			if (access == null) {
+				throw new IOException("从 api 读取 access_token 失败");
+			}
 			Calendar instance = Calendar.getInstance();
 			instance.add(Calendar.SECOND, access.getExpires_in().intValue());
 			setAccessToken(access);
@@ -56,7 +65,7 @@ public class AccessTokenCache implements InitializingBean {
 			DateFormat formatter = DateFormat.getDateTimeInstance();
 			logger.info("access_token due to: " + formatter.format(due));
 			logger.info("write access_token to " + file.getAbsolutePath());
-			mapper.writeValue(file, this);
+			jsonUtil.writeJson(file, this);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -82,9 +91,11 @@ public class AccessTokenCache implements InitializingBean {
 	public void afterPropertiesSet() throws Exception {
 		filePath = System.getProperty("user.home") + "/.weixin/accessCache.json";
 		file = new File(filePath);
-		mapper = new ObjectMapper();
 		try {
-			AccessTokenCache readValue = mapper.readValue(file, AccessTokenCache.class);
+			AccessTokenCache readValue = jsonUtil.readValue(file, AccessTokenCache.class);
+			if (readValue == null) {
+				throw new IOException("从系统文件读取 access_token 失败");
+			}
 			Date now = Calendar.getInstance().getTime();
 			if (readValue.due != null && now.before(readValue.getDue())) {
 				setAccessToken(readValue.getAccessToken());

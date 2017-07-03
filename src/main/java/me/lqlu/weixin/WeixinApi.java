@@ -5,6 +5,11 @@ import org.springframework.stereotype.Component;
 
 import me.lqlu.util.HttpGetAndPostUtil;
 
+/**
+ * weixin端的api调用
+ * @author ahan
+ *
+ */
 @Component
 public class WeixinApi {
 

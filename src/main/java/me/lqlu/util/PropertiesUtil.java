@@ -11,6 +11,11 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.stereotype.Component;
 
+/**
+ * 配置文件加载与缓存
+ * @author ahan
+ *
+ */
 @Component
 public class PropertiesUtil {
 

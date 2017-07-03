@@ -5,6 +5,11 @@ import org.springframework.stereotype.Component;
 
 import me.lqlu.util.PropertiesUtil;
 
+/**
+ * 缓存 AppID 和 AppSecret
+ * @author ahan
+ *
+ */
 @Component
 public class SecretProperties {
 

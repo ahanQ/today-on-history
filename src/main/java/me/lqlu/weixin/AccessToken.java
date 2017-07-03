@@ -1,5 +1,10 @@
 package me.lqlu.weixin;
 
+/**
+ * accss_token 实体类
+ * @author ahan
+ *
+ */
 public class AccessToken {
 
 	private String access_token;
