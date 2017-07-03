@@ -12,7 +12,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import me.lqlu.util.JsonUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * access_token 缓存
@@ -28,7 +28,7 @@ public class AccessTokenCache implements InitializingBean {
 	private WeixinApi api;
 	
 	@Autowired
-	private JsonUtil jsonUtil;
+	private ObjectMapper mapper = new ObjectMapper();
 
 	private AccessToken accessToken;
 
@@ -52,10 +52,7 @@ public class AccessTokenCache implements InitializingBean {
 	private void loadAccessTokenFromApi() {
 		String content = api.getAccessToken();
 		try {
-			AccessToken access = jsonUtil.readValue(content, AccessToken.class);
-			if (access == null) {
-				throw new IOException("从 api 读取 access_token 失败");
-			}
+			AccessToken access = mapper.readValue(content, AccessToken.class);
 			Calendar instance = Calendar.getInstance();
 			instance.add(Calendar.SECOND, access.getExpires_in().intValue());
 			setAccessToken(access);
@@ -65,9 +62,9 @@ public class AccessTokenCache implements InitializingBean {
 			DateFormat formatter = DateFormat.getDateTimeInstance();
 			logger.info("access_token due to: " + formatter.format(due));
 			logger.info("write access_token to " + file.getAbsolutePath());
-			jsonUtil.writeJson(file, this);
+			mapper.writeValue(file, this);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(content + " load fail.");
 		}
 	}
 
@@ -92,10 +89,7 @@ public class AccessTokenCache implements InitializingBean {
 		filePath = System.getProperty("user.home") + "/.weixin/accessCache.json";
 		file = new File(filePath);
 		try {
-			AccessTokenCache readValue = jsonUtil.readValue(file, AccessTokenCache.class);
-			if (readValue == null) {
-				throw new IOException("从系统文件读取 access_token 失败");
-			}
+			AccessTokenCache readValue = mapper.readValue(file, AccessTokenCache.class);
 			Date now = Calendar.getInstance().getTime();
 			if (readValue.due != null && now.before(readValue.getDue())) {
 				setAccessToken(readValue.getAccessToken());
@@ -106,7 +100,7 @@ public class AccessTokenCache implements InitializingBean {
 				logger.info("access_token due to " + formatter.format(due));
 			}
 		} catch (IOException e1) {
-			logger.warn(file.getAbsolutePath() + " in not exists");
+			logger.warn(file.getAbsolutePath() + " load fail.");
 		}
 	}
 
