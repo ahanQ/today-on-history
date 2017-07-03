@@ -27,7 +27,6 @@ public class AccessTokenCache implements InitializingBean {
 	@Autowired
 	private WeixinApi api;
 	
-	@Autowired
 	private ObjectMapper mapper = new ObjectMapper();
 
 	private AccessToken accessToken;
