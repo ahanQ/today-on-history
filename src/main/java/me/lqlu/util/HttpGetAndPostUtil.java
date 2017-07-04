@@ -26,6 +26,12 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class HttpGetAndPostUtil {
+	
+	/**
+	 * get请求
+	 * @param url
+	 * @return
+	 */
 	public String get(String url) {
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		HttpGet httpget = new HttpGet(url);
@@ -44,6 +50,12 @@ public class HttpGetAndPostUtil {
 		return content;
 	}
 
+	/**
+	 * post请求
+	 * @param url
+	 * @param params
+	 * @return
+	 */
 	public String post(String url, Map<String, String> params) {
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		HttpPost httpPost = new HttpPost(url);
@@ -67,6 +79,16 @@ public class HttpGetAndPostUtil {
 			e.printStackTrace();
 		}
 		return content;
+	}
+	
+	/**
+	 * post请求，
+	 * @param url
+	 * @param content 请求包体
+	 * @return
+	 */
+	public String post(String url, String content) {
+		return null;
 	}
 
 }

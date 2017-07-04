@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * access_token 缓存
+ * 
  * @author ahan
  *
  */
@@ -26,7 +27,10 @@ public class AccessTokenCache implements InitializingBean {
 
 	@Autowired
 	private WeixinApi api;
-	
+
+	@Autowired
+	private SecretProperties prop;
+
 	private ObjectMapper mapper = new ObjectMapper();
 
 	private AccessToken accessToken;
@@ -49,7 +53,9 @@ public class AccessTokenCache implements InitializingBean {
 	}
 
 	private void loadAccessTokenFromApi() {
-		String content = api.getAccessToken();
+		String appID = prop.getAppID();
+		String appSecret = prop.getAppSecret();
+		String content = api.getAccessToken(appID, appSecret);
 		try {
 			AccessToken access = mapper.readValue(content, AccessToken.class);
 			Calendar instance = Calendar.getInstance();

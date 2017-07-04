@@ -2,6 +2,7 @@ package me.lqlu.spring.config;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 /**
  * spring 配置类
@@ -10,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
  *
  */
 @Configuration
+@EnableAspectJAutoProxy
 @ComponentScan(basePackages = { "me.lqlu.**" })
 public class Config {
 

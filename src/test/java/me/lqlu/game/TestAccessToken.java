@@ -17,4 +17,5 @@ public class TestAccessToken extends AbstractSpringTest4Junit {
 		String access_token = cache.readAccess_Token();
 		Assert.assertNotNull(access_token);
 	}
+	
 }
