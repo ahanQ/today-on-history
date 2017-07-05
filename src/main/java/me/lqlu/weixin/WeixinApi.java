@@ -47,9 +47,8 @@ public class WeixinApi {
 	 * @param access_token
 	 * @return
 	 */
-	public String createMenu(String access_token) {
-		// TODO 完善创建菜单的编写
-		return http.post(CREATE_MENU.replace(ACCESS_TOKEN, access_token), "");
+	public String createMenu(String access_token, String content) {
+		return http.post(CREATE_MENU.replace(ACCESS_TOKEN, access_token), content);
 	}
 	
 	/**

@@ -6,12 +6,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
@@ -87,8 +90,25 @@ public class HttpGetAndPostUtil {
 	 * @param content 请求包体
 	 * @return
 	 */
-	public String post(String url, String content) {
-		return null;
+	public String post(String url, String json) {
+		CloseableHttpClient httpclient = HttpClients.createDefault();
+		HttpPost httpPost = new HttpPost(url);
+		CloseableHttpResponse response = null;
+		String content = "";
+		try {
+			HttpEntity entity = new StringEntity(json, ContentType.APPLICATION_JSON);
+			
+			httpPost.setEntity(entity);
+			response = httpclient.execute(httpPost);
+			if (response.getStatusLine().getStatusCode() == 200) {
+				content = EntityUtils.toString(response.getEntity(), "utf-8");
+			}
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return content;
 	}
 
 }
