@@ -3,8 +3,8 @@ package me.lqlu.api.todayonhistory.dao;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.UUID;
 
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import me.lqlu.AbstractSpringTest4Junit;
 import me.lqlu.api.todayonhistory.entity.Event;
 
-@SuppressWarnings("deprecation")
 public class TestEventDao extends AbstractSpringTest4Junit {
 
 	@Autowired
@@ -30,7 +29,7 @@ public class TestEventDao extends AbstractSpringTest4Junit {
 	@Test
 	public void testSave() {
 		Event event = new Event();
-		event.setId(RandomStringUtils.randomNumeric(16));
+		event.setId(UUID.randomUUID().toString());
 		event.setE_id(RandomUtils.nextInt(1, 10000));
 		event.setTitle("title");
 		event.setContent("content");

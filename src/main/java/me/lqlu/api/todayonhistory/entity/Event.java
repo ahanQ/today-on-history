@@ -17,7 +17,7 @@ public class Event implements Serializable {
 
 	private String content;
 
-	private transient Integer picNo;
+	private Integer picNo;
 
 	private String picUrl;
 
