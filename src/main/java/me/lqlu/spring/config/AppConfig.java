@@ -13,6 +13,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 @Configuration
 @EnableAspectJAutoProxy
 @ComponentScan(basePackages = { "me.lqlu.**" })
-public class Config {
+public class AppConfig {
 
 }
