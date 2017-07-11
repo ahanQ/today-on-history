@@ -57,4 +57,16 @@ public class JsonUtil {
 			e.printStackTrace();
 		}
 	}
+	public String toJsonString(Object object) {
+		try {
+			return mapper.writeValueAsString(object);
+		} catch (JsonGenerationException e) {
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 }

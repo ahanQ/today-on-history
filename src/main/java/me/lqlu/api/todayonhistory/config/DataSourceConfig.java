@@ -13,9 +13,9 @@ public class DataSourceConfig {
 
 	@Bean
 	public DataSource dataSource() {
-		String url = "jdbc:mysql://localhost:3307/today_on_history";
+		String url = "jdbc:mysql://localhost:3306/today_on_history?useUnicode=true&characterEncoding=utf-8";
 		String username = "root";
-		String password = "";
+		String password = "123456";
 		String DriverClassName = "com.mysql.jdbc.Driver";
 		DriverManagerDataSource ds = new DriverManagerDataSource(url, username, password);
 		ds.setDriverClassName(DriverClassName);
