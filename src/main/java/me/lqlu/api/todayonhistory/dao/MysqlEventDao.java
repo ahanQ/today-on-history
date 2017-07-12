@@ -4,10 +4,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -53,8 +55,7 @@ public class MysqlEventDao implements EventDao {
 	@Override
 	public int save(Event event) {
 		return jdbc.update(INSERT, new PreparedStatementSetter() {
-			@Override
-			public void setValues(PreparedStatement ps) throws SQLException {
+			private void setValues(Event event, PreparedStatement ps) throws SQLException {
 				int i = 0;
 				ps.setString(++i, event.getId());
 				ps.setInt(++i, event.getE_id());
@@ -65,6 +66,40 @@ public class MysqlEventDao implements EventDao {
 				ps.setTimestamp(++i, new Timestamp(event.getDate().getTime()));
 				ps.setString(++i, event.getDay());
 				ps.setTimestamp(++i, new Timestamp(event.getCollectTime().getTime()));
+			}
+
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				setValues(event, ps);
+			}
+		});
+	}
+
+	@Override
+	public int[] save(List<Event> events) {
+		return jdbc.batchUpdate(INSERT, new BatchPreparedStatementSetter() {
+			private void setValues(PreparedStatement ps, Event event) throws SQLException {
+				int i = 0;
+				ps.setString(++i, event.getId());
+				ps.setInt(++i, event.getE_id());
+				ps.setString(++i, event.getTitle());
+				ps.setString(++i, event.getContent());
+				ps.setInt(++i, event.getPicNo());
+				ps.setString(++i, event.getPicUrl());
+				ps.setTimestamp(++i, new Timestamp(event.getDate().getTime()));
+				ps.setString(++i, event.getDay());
+				ps.setTimestamp(++i, new Timestamp(event.getCollectTime().getTime()));
+			}
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				Event event = events.get(i);
+				setValues(ps, event);
+			}
+
+			@Override
+			public int getBatchSize() {
+				return events.size();
 			}
 		});
 	}

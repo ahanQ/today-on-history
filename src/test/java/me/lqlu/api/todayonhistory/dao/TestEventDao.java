@@ -78,18 +78,19 @@ public class TestEventDao extends AbstractSpringTest4Junit {
 		
 		File[] files = dir.listFiles();
 		
+		DateFormat dateformat = new SimpleDateFormat("y年M月d日");
+
 		Map<Integer, List<Event>> eventDetailMap = new HashMap<>();
 		for (File file : files) {
 			String name = file.getName();
 			if(name.contains("EventDetail")) {
-				String eventDetailName = name.substring(0, name.indexOf(".json") - 1);
+				String eventDetailName = name.substring(0, name.indexOf(".json"));
 				String[] eventDetailSplit = eventDetailName.split("-");
 				String collectTimeStr = eventDetailSplit[2];
 				Date collectTime = new Date(Long.parseLong(collectTimeStr));
 				EventDetailResult eventDetailResult = json.readValue(file, EventDetailResult.class);
 				List<EventDetail> eventDetails = eventDetailResult.getResult();
 				if(eventDetails == null) {
-//					System.out.println(e_id + ": eventDetail is null." + " Reason: " + eventDetailResult.getReason());
 					continue;
 				}
 				EventDetail eventDetail = eventDetails.get(0);
@@ -109,8 +110,6 @@ public class TestEventDao extends AbstractSpringTest4Junit {
 				event.setPicNo(picNo);
 				event.setPicUrl(picUrl);
 				event.setCollectTime(collectTime);
-//				event.setDate(date);
-//				event.setDay(day);
 				
 				Assert.assertTrue(StringUtils.isNotBlank(event.getId()));
 				Assert.assertTrue(StringUtils.isNotBlank(event.getTitle()));
@@ -119,8 +118,6 @@ public class TestEventDao extends AbstractSpringTest4Junit {
 				Assert.assertNotNull(event.getPicNo());
 				Assert.assertTrue(StringUtils.isNotBlank(event.getPicUrl()));
 				Assert.assertNotNull(event.getCollectTime());
-//				Assert.assertNotNull(event.getDate());
-//				Assert.assertTrue(StringUtils.isNotBlank(event.getDay()));
 				
 				List<Event> eventDetailList = eventDetailMap.get(e_id);
 				eventDetailList = eventDetailList == null ? new ArrayList<Event>() : eventDetailList;
@@ -129,21 +126,16 @@ public class TestEventDao extends AbstractSpringTest4Junit {
 			}
 		}
 		
+		List<Event> eventResultList = new ArrayList<Event>();
 		for (File file : files) {
 			String name = file.getName();
 			if(name.contains("Events")) {
-				String eventFileName = name.substring(0, name.indexOf(".json") - 1);
-				String[] eventSplit = eventFileName.split("-");
-				String time = eventSplit[3];
-				Date collectTime = new Date(Long.parseLong(time));
-				
 				EventResult eventResult = json.readValue(file, EventResult.class);
 				
 				List<me.lqlu.api.todayonhistory.entity.EventResult.Event> events = eventResult.getResult();
 				for (me.lqlu.api.todayonhistory.entity.EventResult.Event event : events) {
 					String day = event.getDay();
 					String dateStr = event.getDate();
-					DateFormat dateformat = new SimpleDateFormat("Y年M月d日");
 					Date date = null;
 					try {
 						date = dateformat.parse(dateStr.replace("前", "-"));
@@ -170,10 +162,15 @@ public class TestEventDao extends AbstractSpringTest4Junit {
 						Assert.assertNotNull(event_r.getCollectTime());
 						Assert.assertNotNull(event_r.getDate());
 						Assert.assertTrue(StringUtils.isNotBlank(event_r.getDay()));
-//						eventDao.save(event_r);
-						System.out.println(event_r.getContent());
+						eventResultList.add(event_r);
 					}
 				}
+			}
+		}
+		int[] saveSuccess = eventDao.save(eventResultList);
+		for (int i : saveSuccess) {
+			if (i != 1) {
+				System.out.println(i);
 			}
 		}
 	}
