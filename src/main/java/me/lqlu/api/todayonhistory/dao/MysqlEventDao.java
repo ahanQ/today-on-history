@@ -21,35 +21,42 @@ import me.lqlu.api.todayonhistory.entity.Event;
 @Qualifier("mysql")
 public class MysqlEventDao implements EventDao {
 
+	private static final ResultSetExtractor<Event> EVENTRESULTSETEXTRACTOR = new ResultSetExtractor<Event>() {
+		@Override
+		public Event extractData(ResultSet rs) throws SQLException, DataAccessException {
+			Event event = new Event();
+			if (rs.next()) {
+				event.setId(rs.getString("id"));
+				event.setE_id(rs.getInt("e_id"));
+				event.setTitle(rs.getString("title"));
+				event.setContent(rs.getString("content"));
+				event.setPicNo(rs.getInt("picNo"));
+				event.setPicUrl(rs.getString("picUrl"));
+				event.setDate(rs.getDate("date"));
+				event.setDay(rs.getString("day"));
+				event.setCollectTime(rs.getDate("collect_time"));
+			}
+			return event;
+		}
+	};
+	
 	private static final String INSERT = "insert into event (id, e_id, title, content, picNo, picUrl, date, day, collect_time) values (?,?,?,?,?,?,?,?,?)";
 
 	private static final String FIND_BY_ID = "select * from event where id=?";
+
+	private static final String FIND_BY_E_ID = "select * from event where e_id=?";
 
 	@Autowired
 	private JdbcOperations jdbc;
 
 	@Override
 	public Event findById(String id) {
-		return jdbc.query(FIND_BY_ID, new ResultSetExtractor<Event>() {
+		return jdbc.query(FIND_BY_ID, EVENTRESULTSETEXTRACTOR, id);
+	}
 
-			@Override
-			public Event extractData(ResultSet rs) throws SQLException, DataAccessException {
-				Event event = new Event();
-				if (rs.next()) {
-					event.setId(rs.getString("id"));
-					event.setE_id(rs.getInt("e_id"));
-					event.setTitle(rs.getString("title"));
-					event.setContent(rs.getString("content"));
-					event.setPicNo(rs.getInt("picNo"));
-					event.setPicUrl(rs.getString("picUrl"));
-					event.setDate(rs.getDate("date"));
-					event.setDay(rs.getString("day"));
-					event.setCollectTime(rs.getDate("collect_time"));
-				}
-				return event;
-			}
-
-		}, id);
+	@Override
+	public Event findByE_id(int e_id) {
+		return jdbc.query(FIND_BY_E_ID, EVENTRESULTSETEXTRACTOR, e_id);
 	}
 
 	@Override

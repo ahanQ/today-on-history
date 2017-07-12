@@ -1,7 +1,7 @@
 package me.lqlu;
 
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
 import me.lqlu.spring.config.AppConfig;
 
@@ -11,6 +11,6 @@ import me.lqlu.spring.config.AppConfig;
  *
  */
 @ContextConfiguration(classes = { AppConfig.class })
-public abstract class AbstractSpringTest4Junit extends AbstractJUnit4SpringContextTests {
+public abstract class AbstractSpringTest4Junit extends AbstractTransactionalJUnit4SpringContextTests {
 
 }

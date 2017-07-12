@@ -8,6 +8,8 @@ public interface EventDao {
 
 	Event findById(String id);
 
+	Event findByE_id(int e_id);
+
 	int save(Event event);
 
 	int[] save(List<Event> events);
