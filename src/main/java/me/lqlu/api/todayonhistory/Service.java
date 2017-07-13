@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.stereotype.Component;
 
 import me.lqlu.api.todayonhistory.entity.EventDetailResult;
@@ -37,14 +38,11 @@ public class Service implements InitializingBean {
 
 	@Autowired
 	private PropertiesUtil prop;
+	
+	@Autowired
+	private JdbcOperations jdbc;
 
 	private String apiKey;
-
-	private String userHome = System.getProperty("user.home");
-
-	private String separator = System.getProperty("file.separator");
-
-	private String todayOnHistory = userHome + separator + ".juhe" + separator + "TodayOnHistory" + separator;
 
 	public List<Event> todayEvents() {
 		return queryEvents(Calendar.getInstance().getTime());
@@ -53,21 +51,13 @@ public class Service implements InitializingBean {
 	public List<Event> queryEvents(Date date) {
 		String content = api.queryEvent(apiKey, date);
 		EventResult result = json.readValue(content, EventResult.class);
-		long currentTimeMillis = System.currentTimeMillis();
-		File file = new File(todayOnHistory + DATEFORMAT.format(date) + "-Events-" + currentTimeMillis + ".json");
-		List<Event> events = result.getResult();
-		json.writeJson(file, result);
-		return events;
+		return result.getResult();
 	}
 
 	public List<EventDetail> queryDetail(int e_id) {
 		String content = api.queryDetail(apiKey, e_id);
 		EventDetailResult result = json.readValue(content, EventDetailResult.class);
-		List<EventDetail> detail = result.getResult();
-		long currentTimeMillis = System.currentTimeMillis();
-		File file = new File(todayOnHistory + e_id + "-EventDetail-" + currentTimeMillis + ".json");
-		json.writeJson(file, result);
-		return detail;
+		return result.getResult();
 	}
 
 	@Override
